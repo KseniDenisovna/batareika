@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Рефлексия · Батарейка знаний</title>
+
+    <style>
+        /* ===== RESET & BASE ===== */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #dceaf5; /* светло-голубой фон */
+            padding: 20px;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* ===== MAIN WRAPPER ===== */
+        .game-container {
+            max-width: 1200px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 56px;
+            padding: 40px 48px;
+            box-shadow: 0 20px 60px rgba(0, 20, 40, 0.10), 0 8px 24px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: clamp(2rem, 5vw, 3.4rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #1a2a3a; /* тёмный для контраста */
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        .header p {
+            font-size: clamp(1rem, 2vw, 1.35rem);
+            color: #3a4a5a;
+            margin-top: 6px;
+            font-weight: 400;
+            letter-spacing: 0.3px;
+        }
+
+        /* ===== MAIN LAYOUT (flex) ===== */
+        .main-row {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 48px;
+            min-height: 460px;
+        }
+
+        /* ===== LEFT PANEL — BUTTONS ===== */
+        .buttons-panel {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            min-width: 0;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 24px 28px;
+            border: none;
+            border-radius: 28px;
+            font-size: clamp(1.3rem, 2.4vw, 2rem);
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.3s ease, filter 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            min-height: 100px;
+            letter-spacing: 0.3px;
+            text-align: left;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.10);
+            touch-action: manipulation;
+        }
+
+        .btn .emoji {
+            font-size: clamp(2rem, 3.5vw, 3rem);
+            flex-shrink: 0;
+            line-height: 1;
+            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.1));
+        }
+
+        .btn .label-wrap {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .btn .label-wrap .sub {
+            font-size: 0.55em;
+            font-weight: 400;
+            opacity: 0.75;
+            margin-top: 2px;
+        }
+
+        .btn:active {
+            transform: scale(0.96);
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 28px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent 60%);
+            pointer-events: none;
+        }
+
+        /* -- Button 1: Green -- */
+        .btn-green {
+            background: linear-gradient(145deg, #2b8f3e, #1a6b2a);
+            box-shadow: 0 8px 32px rgba(34, 197, 94, 0.20);
+        }
+        .btn-green:hover {
+            box-shadow: 0 12px 44px rgba(34, 197, 94, 0.30);
+            filter: brightness(1.05);
+        }
+        .btn-green:active {
+            box-shadow: 0 4px 16px rgba(34, 197, 94, 0.20);
+        }
+
+        /* -- Button 2: Orange -- */
+        .btn-orange {
+            background: linear-gradient(145deg, #d97d1a, #b85f0e);
+            box-shadow: 0 8px 32px rgba(255, 160, 0, 0.15);
+        }
+        .btn-orange:hover {
+            box-shadow: 0 12px 44px rgba(255, 160, 0, 0.25);
+            filter: brightness(1.05);
+        }
+        .btn-orange:active {
+            box-shadow: 0 4px 16px rgba(255, 160, 0, 0.15);
+        }
+
+        /* -- Button 3: Red -- */
+        .btn-red {
+            background: linear-gradient(145deg, #c62828, #8e1a1a);
+            box-shadow: 0 8px 32px rgba(244, 67, 54, 0.15);
+        }
+        .btn-red:hover {
+            box-shadow: 0 12px 44px rgba(244, 67, 54, 0.25);
+            filter: brightness(1.05);
+        }
+        .btn-red:active {
+            box-shadow: 0 4px 16px rgba(244, 67, 54, 0.15);
+        }
+
+        /* ===== RIGHT PANEL — BATTERY ===== */
+        .battery-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 200px;
+            padding: 10px 0;
+        }
+
+        .battery-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 260px;
+        }
+
+        /* ===== BATTERY VISUAL ===== */
+        .battery-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 9 / 16;
+            max-height: 460px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Glow behind battery */
+        .battery-glow {
+            position: absolute;
+            inset: -16px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 50% 60%, rgba(100, 200, 255, 0.08), transparent 70%);
+            filter: blur(24px);
+            transition: background 1s ease, opacity 0.8s ease;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+        .battery-glow.active {
+            opacity: 0.9;
+        }
+
+        /* Battery cap (top) */
+        .battery-cap {
+            width: 42%;
+            height: 6%;
+            background: linear-gradient(180deg, #4a4f5a, #2d323c);
+            border-radius: 8px 8px 0 0;
+            margin-bottom: -2px;
+            z-index: 2;
+            position: relative;
+            box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.15);
+            flex-shrink: 0;
+        }
+
+        /* Battery body */
+        .battery-body {
+            position: relative;
+            width: 100%;
+            flex: 1;
+            background: #1e232b;
+            border-radius: 16px 16px 10px 10px;
+            border: 3px solid #3a404b;
+            box-shadow:
+                inset 0 4px 20px rgba(0, 0, 0, 0.6),
+                0 8px 32px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            min-height: 200px;
+        }
+
+        /* Inner cavity (darker) */
+        .battery-body::before {
+            content: '';
+            position: absolute;
+            inset: 6px;
+            border-radius: 10px 10px 6px 6px;
+            background: #12161c;
+            z-index: 0;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.7);
+        }
+
+        /* ===== FILL LEVEL ===== */
+        .battery-fill {
+            position: absolute;
+            bottom: 6px;
+            left: 6px;
+            right: 6px;
+            width: auto;
+            height: 0%;
+            border-radius: 0 0 6px 6px;
+            background: linear-gradient(180deg, #4caf50, #2e7d32);
+            transition: height 1.2s cubic-bezier(0.34, 1.2, 0.64, 1),
+                background 0.8s ease,
+                box-shadow 0.8s ease;
+            z-index: 1;
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.15);
+            will-change: height, background;
+        }
+
+        /* Energy gradient overlay (shimmer / wave) */
+        .battery-fill::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(180deg,
+                    rgba(255, 255, 255, 0.20) 0%,
+                    rgba(255, 255, 255, 0.05) 30%,
+                    rgba(255, 255, 255, 0) 60%,
+                    rgba(255, 255, 255, 0.08) 80%,
+                    rgba(255, 255, 255, 0) 100%);
+            pointer-events: none;
+            z-index: 2;
+            animation: shimmer 4s ease-in-out infinite alternate;
+        }
+
+        /* Second overlay — energy wave */
+        .battery-fill::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(180deg,
+                    transparent 0%,
+                    rgba(255, 255, 255, 0.03) 20%,
+                    rgba(255, 255, 255, 0.12) 40%,
+                    rgba(255, 255, 255, 0.03) 60%,
+                    transparent 100%);
+            pointer-events: none;
+            z-index: 3;
+            animation: wave 3.2s ease-in-out infinite alternate;
+            transform: translateY(0%);
+        }
+
+        @keyframes shimmer {
+            0% {
+                opacity: 0.6;
+                transform: scaleY(1);
+            }
+            100% {
+                opacity: 1;
+                transform: scaleY(1.04);
+            }
+        }
+
+        @keyframes wave {
+            0% {
+                transform: translateY(-10%) scaleY(0.95);
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(10%) scaleY(1.05);
+                opacity: 0.9;
+            }
+        }
+
+        /* ===== PERCENTAGE TEXT ===== */
+        .battery-percent {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            color: #fff;
+            font-size: clamp(2.6rem, 5.5vw, 4.2rem);
+            font-weight: 800;
+            text-shadow:
+                0 2px 20px rgba(0, 0, 0, 0.7),
+                0 0 60px rgba(0, 0, 0, 0.3);
+            letter-spacing: -0.02em;
+            transition: color 0.6s ease;
+            pointer-events: none;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .battery-percent .pct {
+            font-size: 0.45em;
+            font-weight: 300;
+            opacity: 0.6;
+            margin-left: 2px;
+        }
+
+        /* ===== LABEL UNDER BATTERY ===== */
+        .battery-label {
+            margin-top: 16px;
+            font-size: clamp(0.9rem, 1.4vw, 1.2rem);
+            font-weight: 500;
+            color: #2a3a4a;
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+
+        .battery-label strong {
+            color: #1a2a3a;
+            font-weight: 600;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 820px) {
+            .game-container {
+                padding: 28px 20px;
+                border-radius: 36px;
+            }
+
+            .main-row {
+                flex-direction: column-reverse;
+                gap: 28px;
+                min-height: unset;
+            }
+
+            .buttons-panel {
+                width: 100%;
+                flex: unset;
+                gap: 16px;
+            }
+
+            .btn {
+                padding: 18px 22px;
+                min-height: 72px;
+                font-size: clamp(1.1rem, 3vw, 1.5rem);
+                border-radius: 20px;
+                justify-content: center;
+                text-align: center;
+            }
+            .btn .label-wrap .sub {
+                font-size: 0.5em;
+            }
+
+            .battery-panel {
+                width: 100%;
+                max-width: 340px;
+                padding: 0;
+                flex: unset;
+            }
+
+            .battery-wrapper {
+                max-width: 200px;
+            }
+
+            .battery-container {
+                max-height: 340px;
+            }
+
+            .battery-percent {
+                font-size: clamp(2.2rem, 8vw, 3.4rem);
+            }
+        }
+
+        @media (max-width: 440px) {
+            .game-container {
+                padding: 16px 12px;
+                border-radius: 24px;
+            }
+
+            .btn {
+                padding: 14px 16px;
+                min-height: 60px;
+                font-size: clamp(0.95rem, 4vw, 1.2rem);
+                gap: 10px;
+                border-radius: 16px;
+            }
+            .btn .emoji {
+                font-size: clamp(1.4rem, 5vw, 2rem);
+            }
+
+            .battery-wrapper {
+                max-width: 150px;
+            }
+            .battery-container {
+                max-height: 260px;
+            }
+            .battery-percent {
+                font-size: clamp(1.8rem, 7vw, 2.6rem);
+            }
+            .battery-label {
+                font-size: 0.75rem;
+                margin-top: 10px;
+            }
+
+            .header h1 {
+                font-size: 1.6rem;
+            }
+            .header p {
+                font-size: 0.85rem;
+            }
+            .header {
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .battery-wrapper {
+                max-width: 120px;
+            }
+            .battery-container {
+                max-height: 200px;
+            }
+            .battery-percent {
+                font-size: 1.4rem;
+            }
+            .btn {
+                min-height: 48px;
+                padding: 10px 12px;
+                font-size: 0.85rem;
+                gap: 6px;
+            }
+            .btn .emoji {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* ===== TOUCH FEEDBACK (Ripple) ===== */
+        .btn .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.20);
+            transform: scale(0);
+            animation: rippleAnim 0.7s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes rippleAnim {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* ===== UTILITY ===== */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+        /* ===== BATTERY COLOR THEMES (dynamic via JS) ===== */
+        /* These are applied as classes on .battery-fill and .battery-glow */
+        .battery-fill.theme-green {
+            background: linear-gradient(180deg, #66e07e, #2b8f3e, #1a6b2a);
+            box-shadow: 0 0 40px rgba(76, 175, 80, 0.25), inset 0 0 20px rgba(76, 175, 80, 0.15);
+        }
+        .battery-fill.theme-green-light {
+            background: linear-gradient(180deg, #9ee7a0, #4caf50, #2e7d32);
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.15);
+        }
+        .battery-fill.theme-orange {
+            background: linear-gradient(180deg, #ffb74d, #ff8f00, #e65100);
+            box-shadow: 0 0 40px rgba(255, 160, 0, 0.20), inset 0 0 20px rgba(255, 160, 0, 0.10);
+        }
+        .battery-fill.theme-orange-pale {
+            background: linear-gradient(180deg, #ffcc80, #ffa726, #f57c00);
+            box-shadow: 0 0 30px rgba(255, 160, 0, 0.12);
+        }
+        .battery-fill.theme-red {
+            background: linear-gradient(180deg, #ef5350, #c62828, #8e1a1a);
+            box-shadow: 0 0 40px rgba(244, 67, 54, 0.25), inset 0 0 20px rgba(244, 67, 54, 0.15);
+        }
+        .battery-fill.theme-red-dark {
+            background: linear-gradient(180deg, #e53935, #b71c1c, #7f1a1a);
+            box-shadow: 0 0 30px rgba(244, 67, 54, 0.15);
+        }
+
+        /* Glow themes */
+        .battery-glow.theme-green {
+            background: radial-gradient(circle at 50% 60%, rgba(76, 175, 80, 0.20), transparent 70%);
+        }
+        .battery-glow.theme-orange {
+            background: radial-gradient(circle at 50% 60%, rgba(255, 160, 0, 0.18), transparent 70%);
+        }
+        .battery-glow.theme-red {
+            background: radial-gradient(circle at 50% 60%, rgba(244, 67, 54, 0.18), transparent 70%);
+        }
+        .battery-glow.theme-green-light {
+            background: radial-gradient(circle at 50% 60%, rgba(76, 175, 80, 0.10), transparent 70%);
+        }
+        .battery-glow.theme-orange-pale {
+            background: radial-gradient(circle at 50% 60%, rgba(255, 160, 0, 0.08), transparent 70%);
+        }
+        .battery-glow.theme-red-dark {
+            background: radial-gradient(circle at 50% 60%, rgba(244, 67, 54, 0.12), transparent 70%);
+        }
+
+        /* ===== ANIMATION: pulse on charge change ===== */
+        .battery-fill.pulse {
+            animation: pulseFill 0.6s ease;
+        }
+
+        @keyframes pulseFill {
+            0% {
+                filter: brightness(1);
+            }
+            40% {
+                filter: brightness(1.25);
+            }
+            100% {
+                filter: brightness(1);
+            }
+        }
+
+        /* ===== BUTTON PRESS FEEDBACK ===== */
+        .btn.pressed {
+            transform: scale(0.94);
+            transition: transform 0.08s ease;
+        }
+
+        .btn .click-feedback {
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: rgba(255, 255, 255, 0.08);
+            animation: flashFeedback 0.35s ease forwards;
+            pointer-events: none;
+        }
+
+        @keyframes flashFeedback {
+            0% {
+                opacity: 0;
+            }
+            30% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container" role="main">
+        <!-- HEADER -->
+        <header class="header">
+            <h1>⚡ Батарейка знаний</h1>
+            <p>Оцени своё понимание урока &mdash; нажми на кнопку</p>
+        </header>
+
+        <!-- MAIN ROW -->
+        <div class="main-row">
+
+            <!-- LEFT: BUTTONS -->
+            <section class="buttons-panel" aria-label="Кнопки рефлексии">
+
+                <!-- Button 1: Green -->
+                <button class="btn btn-green" data-action="good" aria-label="Всё понял, всё получилось">
+                    <span class="emoji">✅</span>
+                    <span class="label-wrap">
+                        Всё понял / Всё получилось
+                        <span class="sub">&#128170; Уверенность растёт</span>
+                    </span>
+                </button>
+
+                <!-- Button 2: Orange -->
+                <button class="btn btn-orange" data-action="medium" aria-label="Есть вопросы, не всё понятно">
+                    <span class="emoji">🤔</span>
+                    <span class="label-wrap">
+                        Есть вопросы / Не всё понятно
+                        <span class="sub">&#128161; Ищем ясность</span>
+                    </span>
+                </button>
+
+                <!-- Button 3: Red -->
+                <button class="btn btn-red" data-action="bad" aria-label="Ничего не понял, было сложно">
+                    <span class="emoji">😰</span>
+                    <span class="label-wrap">
+                        Ничего не понял / Было сложно
+                        <span class="sub">&#128557; Нужна поддержка</span>
+                    </span>
+                </button>
+
+            </section>
+
+            <!-- RIGHT: BATTERY -->
+            <section class="battery-panel" aria-label="Индикатор понимания">
+                <div class="battery-wrapper">
+
+                    <div class="battery-container">
+                        <!-- Glow -->
+                        <div class="battery-glow theme-green" id="batteryGlow"></div>
+
+                        <!-- Cap -->
+                        <div class="battery-cap" aria-hidden="true"></div>
+
+                        <!-- Body -->
+                        <div class="battery-body" aria-hidden="true">
+                            <!-- Fill -->
+                            <div class="battery-fill theme-green" id="batteryFill" style="height: 50%;"></div>
+                            <!-- Percentage -->
+                            <div class="battery-percent" id="batteryPercent">
+                                50<span class="pct">%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="battery-label">
+                        Уровень <strong>понимания</strong>
+                    </div>
+
+                </div>
+            </section>
+
+        </div>
+        <!-- end main-row -->
+    </div>
+    <!-- end game-container -->
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ===== DOM refs =====
+            const fillEl = document.getElementById('batteryFill');
+            const percentEl = document.getElementById('batteryPercent');
+            const glowEl = document.getElementById('batteryGlow');
+            const buttons = document.querySelectorAll('.btn');
+
+            // ===== State =====
+            let level = 50; // 0–100
+            let isAnimating = false;
+
+            // ===== Helpers =====
+
+            // Clamp value between 0 and 100
+            function clamp(v) {
+                return Math.min(100, Math.max(0, Math.round(v)));
+            }
+
+            // Update the battery UI with smooth transitions
+            function updateBattery(newLevel, pulse = false) {
+                const clamped = clamp(newLevel);
+                level = clamped;
+
+                // Update height
+                fillEl.style.height = clamped + '%';
+
+                // Update percentage text
+                percentEl.innerHTML = clamped + '<span class="pct">%</span>';
+
+                // Determine color theme based on level
+                let themeClass = '';
+                let glowClass = '';
+
+                if (clamped >= 80) {
+                    themeClass = 'theme-green';
+                    glowClass = 'theme-green';
+                } else if (clamped >= 60) {
+                    themeClass = 'theme-green-light';
+                    glowClass = 'theme-green-light';
+                } else if (clamped >= 40) {
+                    themeClass = 'theme-orange';
+                    glowClass = 'theme-orange';
+                } else if (clamped >= 20) {
+                    themeClass = 'theme-orange-pale';
+                    glowClass = 'theme-orange-pale';
+                } else if (clamped >= 8) {
+                    themeClass = 'theme-red';
+                    glowClass = 'theme-red';
+                } else {
+                    themeClass = 'theme-red-dark';
+                    glowClass = 'theme-red-dark';
+                }
+
+                // Apply theme classes
+                fillEl.className = 'battery-fill ' + themeClass;
+                glowEl.className = 'battery-glow ' + glowClass + ' active';
+
+                // Pulse animation
+                if (pulse) {
+                    fillEl.classList.remove('pulse');
+                    // Force reflow
+                    void fillEl.offsetWidth;
+                    fillEl.classList.add('pulse');
+                    setTimeout(() => fillEl.classList.remove('pulse'), 700);
+                }
+
+                // Glow intensity based on level
+                const intensity = 0.3 + (clamped / 100) * 0.6;
+                glowEl.style.opacity = intensity;
+            }
+
+            // ===== Button actions =====
+
+            function handleAction(action, btnElement) {
+                if (isAnimating) return;
+                isAnimating = true;
+
+                // Button press feedback
+                if (btnElement) {
+                    btnElement.classList.add('pressed');
+                    // Ripple effect
+                    const ripple = document.createElement('span');
+                    ripple.className = 'ripple';
+                    const rect = btnElement.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    ripple.style.width = ripple.style.height = size + 'px';
+                    ripple.style.left = '50%';
+                    ripple.style.top = '50%';
+                    ripple.style.transform = 'translate(-50%, -50%) scale(0)';
+                    btnElement.appendChild(ripple);
+                    setTimeout(() => ripple.remove(), 700);
+                    setTimeout(() => btnElement.classList.remove('pressed'), 200);
+
+                    // Flash feedback
+                    const flash = document.createElement('span');
+                    flash.className = 'click-feedback';
+                    btnElement.appendChild(flash);
+                    setTimeout(() => flash.remove(), 400);
+                }
+
+                let newLevel = level;
+                let pulse = true;
+
+                switch (action) {
+                    case 'good':
+                        // Increase by 15–22% with a slight random boost for variety
+                        const boost = 16 + Math.floor(Math.random() * 8);
+                        newLevel = level + boost;
+                        if (newLevel > 100) newLevel = 100;
+                        break;
+
+                    case 'medium':
+                        // Slight decrease or stay: -6% to +2%
+                        const delta = -6 + Math.floor(Math.random() * 8);
+                        newLevel = level + delta;
+                        if (newLevel < 0) newLevel = 0;
+                        pulse = Math.abs(delta) > 3;
+                        break;
+
+                    case 'bad':
+                        // Sharp decrease: -20% to -28%
+                        const drop = 20 + Math.floor(Math.random() * 9);
+                        newLevel = level - drop;
+                        if (newLevel < 0) newLevel = 0;
+                        break;
+
+                    default:
+                        break;
+                }
+
+                // Ensure integer
+                newLevel = clamp(Math.round(newLevel));
+
+                // Update UI
+                updateBattery(newLevel, pulse);
+
+                // Unlock after animation
+                setTimeout(() => {
+                    isAnimating = false;
+                }, 400);
+            }
+
+            // ===== Attach event listeners =====
+
+            buttons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    const action = this.dataset.action;
+                    if (action) {
+                        handleAction(action, this);
+                    }
+                });
+
+                // Touch devices: prevent double-tap zoom on buttons
+                btn.addEventListener('touchstart', function(e) {
+                    // Just a passive touch, no need to prevent default
+                }, { passive: true });
+            });
+
+            // ===== Keyboard support =====
+            buttons.forEach(btn => {
+                btn.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        const action = this.dataset.action;
+                        if (action) {
+                            handleAction(action, this);
+                        }
+                    }
+                });
+            });
+
+            // ===== Initial state =====
+            // Start at 50% with a subtle animation
+            setTimeout(() => {
+                updateBattery(50, true);
+            }, 200);
+
+            // ===== Window resize: no-op, but we keep it responsive =====
+
+            console.log('⚡ Батарейка знаний запущена!');
+            console.log('Нажми на кнопку, чтобы изменить уровень понимания.');
+
+        })();
+    </script>
+
+</body>
+</html>
